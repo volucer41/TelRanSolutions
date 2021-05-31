@@ -16,12 +16,13 @@ public class SportLotto {
 
 	public static void displaySportLotto() {
 
-		long counter = 0;
-		while (counter < Math.pow(2, 50) * 7) {
+		long checker = 0;
+		int counter = 0;
+		while (counter <  7) {
 			int number = (int) (1 + Math.random() * 49);
-			if (getBit(counter, number) == 0) {
-				counter = setBit(counter, number);
-				counter += Math.pow(2, 50);
+			if (getBit(checker, number) == 0) {
+				checker = setBit(checker, number);
+				counter++;
 				System.out.println(number);
 			}
 		}
