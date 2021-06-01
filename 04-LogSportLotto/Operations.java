@@ -19,13 +19,9 @@ public class Operations {
 		
 		n = (n < 0) ? (~n + 1) : (n);
 
-		int i = 62;
-		while (log2Result == 0) {
-			log2Result = getBit(n, i);
-			if (log2Result == 1) {
-				return i;
-			}
-			i--;
+		log2Result = 62;
+		while (getBit(n, log2Result) == 0) {
+			log2Result--;
 		}
 
 		return log2Result;
