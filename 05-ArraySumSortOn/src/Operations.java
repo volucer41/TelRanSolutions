@@ -43,7 +43,7 @@ public class Operations {
 
 	private static void fillSortedArray(short counters[], short ar[]) {
 		int index = 0;
-		for (int i = 0; i < counters.length; i++) {
+		for (int i = 0; i < counters.length && index < ar.length; i++) {
 			for (int j = 0; j < counters[i]; j++) {
 				ar[index] = (short) i;
 				index++;
