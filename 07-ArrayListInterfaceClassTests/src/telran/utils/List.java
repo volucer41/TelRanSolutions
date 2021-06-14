@@ -34,5 +34,12 @@ public interface List<T> {
 	 * @return true if removed, otherwise false (wrong index)
 	 */
 	boolean remove(int index);
+	/**
+	 * 
+	 * @param pattern
+	 * @return index of first occurrence for an object equaled to the pattern
+	 * in the case no object equaled to the pattern returns -1
+	 */
+	int indexOf(T pattern);
 
 }

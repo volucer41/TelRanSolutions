@@ -30,38 +30,57 @@ public ArrayList() {
 	@Override
 	public boolean add(T obj, int index) {
 		// TODO Auto-generated method stub
-		if (index < 0) return false;
-		else if (index > array.length - 1) {
-			while (index >= array.length) {
-				allocate();
-			}
+		if (index < 0 || index > size) {
+			return false;
 		}
+		if (size >= array.length)
+			allocate();
+		System.arraycopy(array, index, array, index + 1, size - index);
 		array[index] = obj;
-		size = index++;
+		size++;
 		return true;
 	}
 
 	@Override
 	public T get(int index) {
-		if (index < 0 || index > array.length -1) {
-			return null;
+		T res = null;
+		if (index < 0 || index > size) {
+			return res;
 		}
-		return array[index];
+		res = array[index];
+		return res;
 	}
 
 	@Override
 	public boolean remove(int index) {
+		boolean res = false;
 		if (index < size && index >= 0) {
-			System.arraycopy(array, index + 1, array, index, size - index);
 			size--;
-			return true;
+			System.arraycopy(array, index + 1, array, index, size - index);
+			//Potential memory leak, to avoid move null to array[size] it is
+			//the last element of array before remove
+			array[size] = null;
 		}
-		return false;
+		return res;
 	}
 	@Override
 	public int size() {
 		
 		return size;
+	}
+	@Override
+	public int indexOf(T pattern) {
+		int index = 0;
+		//code bellow will be check links to the objects
+		//as a result, result never be equals
+		//To avoid work with links, need to use .equals method
+		//.equals method will be check value, but not link
+		//NOTE test will be work from -128:127 - this objects precreated by JVM and have a same links
+		//while(index < size && array[index] != pattern) {
+		while(index < size && !array[index].equals(pattern)) {
+			index++;
+		}
+		return index < size ? index : -1;
 	}
 
 }
