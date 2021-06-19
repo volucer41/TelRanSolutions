@@ -177,5 +177,15 @@ public class ArrayList<T> implements List<T> {
 			return false;
 		return true;
 	}
+	
+	default void sort() {
+		//TODO sort by natural order
+		
+	}
+	
+	default void sort(Comparator<T> comp) {
+		//TODO sorting according to the given comparator
+		
+	}
 
 }
