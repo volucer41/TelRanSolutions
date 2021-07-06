@@ -6,16 +6,37 @@ import java.util.function.Predicate;
 
 @SuppressWarnings("unchecked")
 public class ArrayList<T> extends AbstractList<T> {
-	private static final int DEFAULT_CAPACITY = 16;
-	private T array[];
-	
+	private class ArrayListIterator implements Iterator<T> {
+		public int currentIndex = 0;
 
-	public ArrayList(int capacity) {
-		array = (T[]) new Object[capacity];
+		@Override
+		public boolean hasNext() {
+
+			return currentIndex < size;
+		}
+
+		@Override
+		public T next() {
+
+			return array[currentIndex++];
+		}
+
+		@Override
+		public void remove() {
+			ArrayList.this.remove(currentIndex == size ? size - 1 : 4);
+		}
+
 	}
+	private static final int DEFAULT_CAPACITY = 16;
+
+	private T array[];
 
 	public ArrayList() {
 		this(DEFAULT_CAPACITY);
+	}
+
+	public ArrayList(int capacity) {
+		array = (T[]) new Object[capacity];
 	}
 
 	@Override
@@ -24,11 +45,6 @@ public class ArrayList<T> extends AbstractList<T> {
 			allocate();
 		}
 		array[size++] = obj;
-
-	}
-
-	private void allocate() {
-		array = Arrays.copyOf(array, array.length * 2);
 
 	}
 
@@ -46,6 +62,26 @@ public class ArrayList<T> extends AbstractList<T> {
 		return true;
 	}
 
+	private void allocate() {
+		array = Arrays.copyOf(array, array.length * 2);
+
+	}
+
+	@Override
+	public void clean() {
+		int sizeBeforeRemoving = size;
+		size = 0;
+		clean(sizeBeforeRemoving);
+
+	}
+
+	private void clean(int sizeBefore) {
+		for (int i = size; i < sizeBefore; i++) {
+			array[i] = null;
+		}
+
+	}
+
 	@Override
 	public T get(int index) {
 		T res = null;
@@ -53,6 +89,30 @@ public class ArrayList<T> extends AbstractList<T> {
 			res = array[index];
 		}
 		return res;
+	}
+
+	@Override
+	public int indexOf(Predicate<T> predicate) {
+		int index = 0;
+		while (index < size && !predicate.test(array[index])) {
+			index++;
+		}
+		return index < size ? index : -1;
+	}
+
+	@Override
+	public Iterator<T> iterator() {
+
+		return new ArrayListIterator();
+	}
+
+	@Override
+	public int lastIndexOf(Predicate<T> predicate) {
+		int index = size - 1;
+		while (index >= 0 && !predicate.test(array[index])) {
+			index--;
+		}
+		return index;
 	}
 
 	@Override
@@ -68,14 +128,6 @@ public class ArrayList<T> extends AbstractList<T> {
 		return res;
 	}
 
-	
-
-	
-
-	
-
-	
-
 	@Override
 	public boolean remove(T pattern) {
 
@@ -83,31 +135,23 @@ public class ArrayList<T> extends AbstractList<T> {
 	}
 
 	@Override
-	public void addAll(List<T> objects) {
-		int size = objects.size();
-		for (int i = 0; i < size; i++) {
-			add(objects.get(i));
-
+	public boolean removeIf(Predicate<T> predicate) {
+		int sizeBeforeRemoving = size;
+		int currentIndex = 0;
+		for (int i = 0; i < sizeBeforeRemoving; i++) {
+			if (predicate.test(array[i])) {
+				size--;
+			} else {
+				array[currentIndex++] = array[i];
+			}
 		}
-		
-
+		boolean res = sizeBeforeRemoving > size;
+		if (res) {
+			clean(sizeBeforeRemoving);
+		}
+		return res;
 
 	}
-
-	
-
-	private void clean(int sizeBefore) {
-		for (int i = size; i < sizeBefore; i++) {
-			array[i] = null;
-		}
-		
-	}
-
-	
-
-	
-
-	
 
 	@Override
 	public T set(T object, int index) {
@@ -130,57 +174,5 @@ public class ArrayList<T> extends AbstractList<T> {
 		}
 		return res;
 	}
-
-	@Override
-	public int indexOf(Predicate<T> predicate) {
-		int index = 0;
-		while(index < size && !predicate.test(array[index])) {
-			index++;
-		}
-		return index < size ? index : -1;
-	}
-
-	@Override
-	public int lastIndexOf(Predicate<T> predicate) {
-		int index = size - 1;
-		while(index >= 0 && !predicate.test(array[index])) {
-			index--;
-		}
-		return index;
-	}
-
-	@Override
-	public boolean removeIf(Predicate<T> predicate) {
-		int sizeBeforeRemoving = size;
-		int currentIndex = 0;
-		for(int i = 0; i < sizeBeforeRemoving; i++) {
-			if (predicate.test(array[i])) {
-				size--;
-			} else {
-				array[currentIndex++] = array[i];
-			}
-		}
-		boolean res = sizeBeforeRemoving > size;
-		if (res) {
-			clean(sizeBeforeRemoving);
-		}
-		return res;
-		
-	}
-
-	@Override
-	public void clean() {
-		int sizeBeforeRemoving = size;
-		size = 0;
-		clean(sizeBeforeRemoving);
-	}
-
-	@Override
-	public Iterator<T> iterator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	
 
 }

@@ -1,9 +1,10 @@
 package telran.utils;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.function.Predicate;
 
-public interface List<T> extends Iterable<T>{
+public interface List<T> extends Iterable<T> {
 	/**
 	 * 
 	 * @return number of elements
@@ -75,7 +76,16 @@ public interface List<T> extends Iterable<T>{
 	 * 
 	 * @param objects
 	 */
-	void addAll(List<T> objects);
+	
+	public default void addAll(List<T> objects) {
+		int size = objects.size();
+		Iterator<T> it = objects.iterator();
+		for (int i = 0; i < size; i++) {
+			add(it.next());
+
+		}
+
+	}
 
 	/**
 	 * removes all objects equaled to the given patterns
@@ -193,7 +203,18 @@ public interface List<T> extends Iterable<T>{
 	 * @param predicate
 	 * @return true if at least one object has been removed
 	 */
-	boolean removeIf(Predicate<T> predicate);
+	default boolean removeIf(Predicate<T> predicate) {
+		Iterator<T> it = iterator();
+		boolean res = false;
+		while(it.hasNext()) {
+			T obj = it.next();
+			if (predicate.test(obj)) {
+				it.remove();
+				res = true;
+			}
+		}
+		return res;
+	}
 
 	/**
 	 * for several equaled objects to leave only one and remove others
